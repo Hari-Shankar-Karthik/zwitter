@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comment ID <%= id %></title>
+    <title>Comment ID <%= comment._id %></title>
 </head>
 <body>
-    <h1>Comment ID <%= id %></h1>
-    <h2>Username: <%= username %></h2>
-    <h2>Comment: <%= comment %></h2>
-    <form action="/comments/<%= id %>/edit" method="get">
+    <h1>Comment ID <%= comment._id %></h1>
+    <h2>Username: <%= comment.username %></h2>
+    <h2>Comment: <%= comment.comment %></h2>
+    <form action="/comments/<%= comment._id %>/edit" method="get">
         <button>Edit</button>
     </form>
-    <form action="/comments/<%= id %>?_method=DELETE" method="post">
+    <form action="/comments/<%= comment._id %>?_method=DELETE" method="post">
         <button>Delete</button>
     </form>
     <form action="/comments" method="get">

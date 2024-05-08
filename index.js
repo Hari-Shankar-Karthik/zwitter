@@ -1,74 +1,71 @@
-const path = require("path");
 const express = require("express");
-const methodOverride = require("method-override");
-const ejs = require("ejs");
 const app = express();
+const ejs = require("ejs");
+const path = require("path");
+const methodOverride = require("method-override");
+const mongoose = require('mongoose');
 
+const Comment = require('./models/Comment');
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
+
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
-app.use(express.static("public"));
+// app.use(express.static("public"));
+
+mongoose.connect('mongodb://localhost:27017/my-comments')
+    .then(() => {
+        console.log("Mongo connection open!");
+    })
+    .catch(err => {
+        console.log("Mongo connection error!");
+        console.log(err);
+    });
 
 const portNum = 8080;
 app.listen(portNum, () => {
     console.log(`Listening on port ${portNum}`);
 })
 
-app.get("/comments", (req, res) => {
-    res.render("index", {comments: allComments});
+app.get("/comments", async (req, res) => {
+    const comments = await Comment.find();
+    res.render("index", {comments});
 })
 
 app.get("/comments/new", (req, res) => {
     res.render("new");
 })
 
-app.post("/comments", (req, res) => {
-    const {username, comment} = req.body;
-    allComments.push({username, comment, id: uuidv4()});
+app.post("/comments", async (req, res) => {
+    const newComment = new Comment(req.body);
+    await newComment.save();
     res.redirect("/comments");
 })
 
-const getComment = id => allComments.find(comment => comment.id === id);
-
-const renderSpecificComment = (req, res, route, fallbackRoute = "error-404") => {
-    const comment = getComment(req.params.id);
-    if(comment) {
-        res.render(route, {...comment});
-    } else {
-        res.render(fallbackRoute);
-    }
-}
-
-app.get("/comments/:id", (req, res) => {
-    renderSpecificComment(req, res, "show");
-})
-
-app.get("/comments/:id/edit", (req, res) => {
-    renderSpecificComment(req, res, "edit");
-})
-
-const getIndex = id => allComments.findIndex(comment => comment.id === id);
-
-app.patch("/comments/:id", (req, res) => {
+app.get("/comments/:id", async (req, res) => {
     const {id} = req.params;
-    const index = getIndex(id);
-    if(index >= 0) {
-        const {comment} = req.body;
-        allComments[index].comment = comment;
-    }
+    const comment = await Comment.findById(id);
+    res.render('show', {comment});
+})
+
+app.get("/comments/:id/edit", async (req, res) => {
+    const {id} = req.params;
+    const comment = await Comment.findById(id);
+    res.render('edit', {comment});
+})
+
+app.patch("/comments/:id", async (req, res) => {
+    const {id} = req.params;
+    const updatedComment = await Comment.findByIdAndUpdate(id, req.body, {runValidators: true, new: true});
     res.redirect(`/comments/${id}`);
 })
 
-app.delete("/comments/:id", (req, res) => {
-    const index = getIndex(req.params.id);
-    if(index >= 0) {
-        allComments.splice(index, 1);
-    }
+app.delete("/comments/:id", async (req, res) => {
+    const {id} = req.params;
+    await Comment.findByIdAndDelete(id);
     res.redirect("/comments");
 })
-
 
 app.get("*", (req, res) => {
     res.render("error-404");

@@ -11,7 +11,7 @@
         <% for(const comment of comments) { %>
             <li>
                 <b><%= comment.username %></b>: <%= comment.comment %>
-                <a href="/comments/<%= comment.id %>">details</a>
+                <a href="/comments/<%= comment._id %>">details</a>
             </li>
         <% } %>
     </ul>

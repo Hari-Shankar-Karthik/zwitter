@@ -6,13 +6,13 @@
     <title>Edit Comment</title>
 </head>
 <body>
-    <h1>Edit Comment ID <%= id %></h1>
-    <h2>Username: <%= username %></h2>
-    <form action="/comments/<%= id %>?_method=PATCH" method="post">
+    <h1>Edit Comment ID <%= comment.id %></h1>
+    <h2>Username: <%= comment.username %></h2>
+    <form action="/comments/<%= comment.id %>?_method=PATCH" method="post">
         <label for="comment">Comment: </label>
-        <textarea name="comment" id="comment" cols="30" rows="5"><%= comment %></textarea>
+        <textarea name="comment" id="comment" cols="30" rows="5"><%= comment.comment %></textarea>
         <button>Save</button>
     </form>
-    <a href="/comments/<%= id %>">Cancel</a>
+    <a href="/comments/<%= comment.id %>">Cancel</a>
 </body>
 </html>
