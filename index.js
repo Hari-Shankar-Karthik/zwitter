@@ -1,51 +1,9 @@
 const path = require("path");
 const express = require("express");
 const methodOverride = require("method-override");
-const {v4: uuidv4} = require("uuid");
 const ejs = require("ejs");
 const app = express();
-const allComments = [
-    { 
-        id: uuidv4(),
-        username: 'Harry Clifton', 
-        comment: "This song gives me chills every time I listen to it! 😍" 
-    },
-    { 
-        id: uuidv4(),
-        username: 'Emma Barrington', 
-        comment: "I'm supposed to be studying, but here I am, watching this instead. Worth it!" 
-    },
-    { 
-        id: uuidv4(),
-        username: 'Giles Barrington', 
-        comment: "Can't wait to see this movie! The trailer looks epic!" 
-    },
-    { 
-        id: uuidv4(),
-        username: 'Sebastian Clifton', 
-        comment: "I tried making this recipe, and it turned out delicious! Thanks for sharing!" 
-    },
-    { 
-        id: uuidv4(),
-        username: 'Maisie Clifton', 
-        comment: "I followed this workout routine for a week, and I can already see results. Highly recommend!" 
-    },
-    { 
-        id: uuidv4(),
-        username: 'Hugo Barrington', 
-        comment: "Adding this destination to my bucket list! Looks breathtaking 😍" 
-    },
-    { 
-        id: uuidv4(),
-        username: 'Jessica Clifton', 
-        comment: "I never knew I needed this DIY project until now. Time to get crafting!" 
-    },
-    { 
-        id: uuidv4(),
-        username: 'Grace Barrington', 
-        comment: "My cat was mesmerized by this video! 😺"
-    }
-]; // pretend this came from a database
+
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
