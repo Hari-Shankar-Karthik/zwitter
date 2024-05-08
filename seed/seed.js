@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Comment = require('../models/Comment');
-const {seedComments} = require('./helper');
+const seedComments = require('./helper');
 
 mongoose.connect('mongodb://localhost:27017/my-comments')
     .then(() => {

@@ -1,4 +1,4 @@
-module.exports.seedComments = [
+seedComments = [
     { 
         username: 'Harry Clifton', 
         comment: "This song gives me chills every time I listen to it! 😍" 
@@ -32,3 +32,5 @@ module.exports.seedComments = [
         comment: "My cat was mesmerized by this video! 😺"
     }
 ];
+
+module.exports = seedComments;
