@@ -78,9 +78,9 @@ app.delete("/comments/:id", wrapHandler(async (req, res) => {
 
 app.use((err, req, res, next) => {
     const {message = 'Something went wrong...', status = 500} = err;
-    res.status(status).send(message);
+    res.render('error', {message, status});
 })
 
 app.use((req, res) => {
-    res.render("error-404");
+    res.render("error", {message: 'Page not found', status: 404});
 })
