@@ -1,0 +1,11 @@
+<% block('title').append('<title>New Comment</title>') %>
+<%- layout('boilerplate') %>
+<h1>New Comment</h1>
+<form action="/comments" method="post">
+    <label for="username">Username: </label>
+    <input type="text" name="username" id="username">
+    <label for="body">Comment: </label>
+    <textarea name="body" id="body" cols="30" rows="5"></textarea>
+    <button>Submit</button>
+</form>
+<a href="/comments">Cancel</a>

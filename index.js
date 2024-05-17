@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const ejs = require("ejs");
+const ejsMate = require('ejs-mate');
 const path = require("path");
 const methodOverride = require("method-override");
 const mongoose = require('mongoose');
@@ -10,6 +11,7 @@ const Comment = require('./models/comment');
 const AppError = require('./errors/AppError');
 const wrapHandler = require('./errors/wrapHandler');
 
+app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
@@ -33,11 +35,11 @@ app.listen(portNum, () => {
 
 app.get("/comments", wrapHandler(async (req, res) => {
     const comments = await Comment.find();
-    res.render("index", {comments});
+    res.render("comments/index", {comments});
 }))
 
 app.get("/comments/new", (req, res) => {
-    res.render("new");
+    res.render("comments/new");
 })
 
 app.post("/comments", wrapHandler(async (req, res) => {
@@ -52,7 +54,7 @@ app.get("/comments/:id", wrapHandler(async (req, res) => {
     if(!comment) {
         throw new AppError('Comment not found', 404);
     }
-    res.render('show', {comment});
+    res.render('comments/show', {comment});
 }))
 
 app.get("/comments/:id/edit", wrapHandler(async (req, res) => {
@@ -61,7 +63,7 @@ app.get("/comments/:id/edit", wrapHandler(async (req, res) => {
     if(!comment) {
         throw new AppError('Comment not found', 404);
     }
-    res.render('edit', {comment});
+    res.render('comments/edit', {comment});
 }))
 
 app.patch("/comments/:id", wrapHandler(async (req, res) => {

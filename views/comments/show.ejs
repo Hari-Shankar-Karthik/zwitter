@@ -1,0 +1,14 @@
+<% block('title').append('<title>Show Comment</title>') %>
+<%- layout('boilerplate') %>
+<h1>Comment ID <%= comment._id %></h1>
+<h2>Username: <%= comment.username %></h2>
+<h2>Comment: <%= comment.body %></h2>
+<form action="/comments/<%= comment._id %>/edit" method="get">
+    <button>Edit</button>
+</form>
+<form action="/comments/<%= comment._id %>?_method=DELETE" method="post">
+    <button>Delete</button>
+</form>
+<form action="/comments" method="get">
+    <button id="main-page">Main Page</button>
+</form>

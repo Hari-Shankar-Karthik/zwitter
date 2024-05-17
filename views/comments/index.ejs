@@ -1,0 +1,12 @@
+<% block('title').append('<title>Comments</title>') %>
+<%- layout('boilerplate') %>
+<h1>Welcome to the Comments Page!</h1>
+<ul>
+    <% for(const comment of comments) { %>
+        <li>
+            <b><%= comment.username %></b>: <%= comment.body %>
+            <a href="/comments/<%= comment._id %>">details</a>
+        </li>
+    <% } %>
+</ul>
+<a href="/comments/new">New Comment</a>
