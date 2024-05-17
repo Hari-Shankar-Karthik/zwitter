@@ -5,7 +5,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const mongoose = require('mongoose');
 
-const Comment = require('./models/Comment');
+const Comment = require('./models/comment');
 
 const AppError = require('./errors/AppError');
 const wrapHandler = require('./errors/wrapHandler');
