@@ -8,3 +8,7 @@ const userSchema = new Schema({
     },
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
 });
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
