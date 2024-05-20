@@ -1,0 +1,12 @@
+<% block('title').append('<title>Users</title>') %>
+<%- layout('boilerplate') %>
+<h1>Welcome to the Users Page!</h1>
+<ul>
+    <% for(const user of users) { %>
+        <li>
+            <b><%= user.username %></b>
+            <a href="/users/<%= user._id %>">details</a>
+        </li>
+    <% } %>
+</ul>
+<a href="/users/new">New user</a>

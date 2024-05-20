@@ -1,0 +1,9 @@
+<% block('title').append('<title>New User</title>') %>
+<%- layout('boilerplate') %>
+<h1>New User</h1>
+<form action="/users" method="post">
+    <label for="username">Username: </label>
+    <input type="text" name="username" id="username">
+    <button>Submit</button>
+</form>
+<a href="/users">Cancel</a>

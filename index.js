@@ -7,6 +7,7 @@ const methodOverride = require("method-override");
 const mongoose = require('mongoose');
 
 const Comment = require('./models/comment');
+const User = require('./models/user');
 
 const AppError = require('./errors/AppError');
 const wrapHandler = require('./errors/wrapHandler');
@@ -33,6 +34,41 @@ app.listen(portNum, () => {
     console.log(`Listening on port ${portNum}`);
 })
 
+// User Routes:
+
+app.get('/users', wrapHandler(async (req, res) => {
+    const users = await User.find();
+    res.render('users/index', {users});
+}))
+
+app.get("/users/new", (req, res) => {
+    res.render("users/new");
+})
+
+app.post("/users", wrapHandler(async (req, res) => {
+    const newUser = new User(req.body);
+    await newUser.save();
+    res.redirect(`/users/${newUser._id}`);
+}))
+
+app.get("/users/:userID", wrapHandler(async (req, res) => {
+    const {userID} = req.params;
+    const user = await User.findById(userID);
+    if(!user) {
+        throw new AppError('User not found', 404);
+    }
+    res.render('users/show', {user});
+}))
+
+app.delete('/users/:userID', wrapHandler(async (req, res) => {
+    const {userID} = req.params;
+    await User.findByIdAndDelete(userID);
+    // TODO: Delete all comments associated with this user
+    res.redirect('/users');
+}))
+
+// Comment Routes:
+
 app.get("/comments", wrapHandler(async (req, res) => {
     const comments = await Comment.find();
     res.render("comments/index", {comments});
@@ -45,7 +81,7 @@ app.get("/comments/new", (req, res) => {
 app.post("/comments", wrapHandler(async (req, res) => {
     const newComment = new Comment(req.body);
     await newComment.save();
-    res.redirect("/comments");
+    res.redirect(`/comments/${newComment._id}`);
 }))
 
 app.get("/comments/:id", wrapHandler(async (req, res) => {
