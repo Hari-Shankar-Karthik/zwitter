@@ -4,9 +4,11 @@
 <ul>
     <% for(const comment of comments) { %>
         <li>
-            <b><%= comment.username %></b>: <%= comment.body %>
-            <a href="/comments/<%= comment._id %>">details</a>
+            <b><%= comment.author.username %></b>: <%= comment.body %>
+            <a href="/users/<%= comment.author._id %>/comments/<%= comment._id %>">details</a>
         </li>
     <% } %>
 </ul>
-<a href="/comments/new">New Comment</a>
+<form action="/home">
+    <button>Back to Home</button>
+</form>

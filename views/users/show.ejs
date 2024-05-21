@@ -1,12 +1,22 @@
 <% block('title').append('<title>Show User</title>') %>
 <%- layout('boilerplate') %>
-<h1>User ID <%= user._id %></h1>
-<h2>Username: <%= user.username %></h2>
+<h1>Username: <%= user.username %></h1>
 <h2>Comments</h2>
 <!-- TODO: render comments here -->
+<ul>
+    <% for(const comment of user.comments) { %>
+        <li>
+            <%= comment.body %>
+            <a href="/users/<%= user._id %>/comments/<%= comment._id %>">details</a>
+        </li>
+    <% } %>
+</ul>
+<form action="/users/<%= user._id %>/comments/new">
+    <button>New Comment</button>
+</form>
 <form action="/users/<%= user._id %>?_method=DELETE" method="post">
     <button>Delete User</button>
 </form>
 <form action="/users" method="get">
-    <button id="main-page">Main Page</button>
+    <button id="main-page">View All Users</button>
 </form>

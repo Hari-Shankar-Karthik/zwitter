@@ -34,6 +34,12 @@ app.listen(portNum, () => {
     console.log(`Listening on port ${portNum}`);
 })
 
+// Home Route:
+
+app.get("/home", (req, res) => {
+    res.render("home");
+})
+
 // User Routes:
 
 app.get('/users', wrapHandler(async (req, res) => {
@@ -53,12 +59,15 @@ app.post("/users", wrapHandler(async (req, res) => {
 
 app.get("/users/:userID", wrapHandler(async (req, res) => {
     const {userID} = req.params;
-    const user = await User.findById(userID);
+    const user = await User.findById(userID).populate('comments');
     if(!user) {
         throw new AppError('User not found', 404);
     }
     res.render('users/show', {user});
 }))
+
+// GET /users/:userID/edit and PATCH /users/:userID not required
+// because user only has one attribute (username) and that can't be changed
 
 app.delete('/users/:userID', wrapHandler(async (req, res) => {
     const {userID} = req.params;
@@ -67,58 +76,80 @@ app.delete('/users/:userID', wrapHandler(async (req, res) => {
     res.redirect('/users');
 }))
 
-// Comment Routes:
+// Routes Accessing Comment Through User:
 
-app.get("/comments", wrapHandler(async (req, res) => {
-    const comments = await Comment.find();
-    res.render("comments/index", {comments});
+// /users/:userID/comments -> not required because comments are shown on /user/:userID
+// if user model has a lot of attributes, then comments should be its own route
+
+app.get('/users/:userID/comments/new', wrapHandler(async (req, res) => {
+    const {userID} = req.params;
+    const user = await User.findById(userID);
+    if(!user) {
+        throw new AppError('User not found', 404);
+    }
+    res.render('comments/new', { user });
 }))
 
-app.get("/comments/new", (req, res) => {
-    res.render("comments/new");
-})
-
-app.post("/comments", wrapHandler(async (req, res) => {
+app.post('/users/:userID/comments', wrapHandler(async (req, res) => {
+    const {userID} = req.params;
+    const user = await User.findById(userID);
+    if(!user) {
+        throw new AppError('User not found', 404);
+    }
+    // console.log(req.body);
     const newComment = new Comment(req.body);
+    newComment.author = user;
     await newComment.save();
-    res.redirect(`/comments/${newComment._id}`);
+    user.comments.push(newComment);
+    await user.save();
+    res.redirect(`/users/${userID}`);
 }))
 
-app.get("/comments/:id", wrapHandler(async (req, res) => {
-    const {id} = req.params;
-    const comment = await Comment.findById(id);
+app.get('/users/:userID/comments/:commentID', wrapHandler(async (req, res) => {
+    const {commentID} = req.params;
+    const comment = await Comment.findById(commentID).populate('author');
+    // console.log(comment);
     if(!comment) {
         throw new AppError('Comment not found', 404);
     }
     res.render('comments/show', {comment});
 }))
 
-app.get("/comments/:id/edit", wrapHandler(async (req, res) => {
-    const {id} = req.params;
-    const comment = await Comment.findById(id);
+app.get('/users/:userID/comments/:commentID/edit', wrapHandler(async (req, res) => {
+    const {commentID} = req.params;
+    const comment = await Comment.findById(commentID).populate('author');
     if(!comment) {
         throw new AppError('Comment not found', 404);
     }
     res.render('comments/edit', {comment});
 }))
 
-app.patch("/comments/:id", wrapHandler(async (req, res) => {
-    const {id} = req.params;
-    const updatedComment = await Comment.findByIdAndUpdate(id, req.body, {runValidators: true, new: true});
-    res.redirect(`/comments/${id}`);
+app.patch('/users/:userID/comments/:commentID', wrapHandler(async (req, res) => {
+    const {userID, commentID} = req.params;
+    await Comment.findByIdAndUpdate(commentID, req.body, {runValidators: true, new: true});
+    res.redirect(`/users/${userID}/comments/${commentID}`);
 }))
 
-app.delete("/comments/:id", wrapHandler(async (req, res) => {
-    const {id} = req.params;
-    await Comment.findByIdAndDelete(id);
-    res.redirect("/comments");
+// TODO: DELETE /users/:userID/comments/:commentID
+
+// Comment Routes
+
+app.get("/comments", wrapHandler(async (req, res) => {
+    const comments = await Comment.find().populate('author');
+    res.render("comments/index", {comments});
 }))
+
+// app.delete("/comments/:id", wrapHandler(async (req, res) => {
+//     const {id} = req.params;
+//     await Comment.findByIdAndDelete(id);
+//     res.redirect("/comments");
+// }))
 
 app.use((err, req, res, next) => {
     const {message = 'Something went wrong...', status = 500} = err;
     res.render('error', {message, status});
 })
 
-app.use((req, res) => {
-    res.render("error", {message: 'Page not found', status: 404});
-})
+// app.use((req, res) => {
+//     res.render("error", {message: 'Page not found', status: 404});
+// })

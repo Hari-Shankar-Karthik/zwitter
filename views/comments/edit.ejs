@@ -1,10 +1,9 @@
 <% block('title').append('<title>Edit Comment</title>') %>
 <%- layout('boilerplate') %>
-<h1>Edit Comment ID <%= comment.id %></h1>
-<h2>Username: <%= comment.username %></h2>
-<form action="/comments/<%= comment.id %>?_method=PATCH" method="post">
+<h1><%= comment.author.username %>: Edit Comment</h1>
+<form action="/users/<%= comment.author._id %>/comments/<%= comment.id %>?_method=PATCH" method="post">
     <label for="comment">Comment: </label>
     <textarea name="body" id="body" cols="30" rows="5"><%= comment.body %></textarea>
-    <button>Save</button>
+    <button>Save Comment</button>
 </form>
-<a href="/comments/<%= comment.id %>">Cancel</a>
+<a href="/users/<%= comment.author._id %>/comments/<%= comment.id %>">Cancel</a>
