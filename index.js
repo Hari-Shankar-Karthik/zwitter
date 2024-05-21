@@ -72,7 +72,6 @@ app.get("/users/:userID", wrapHandler(async (req, res) => {
 app.delete('/users/:userID', wrapHandler(async (req, res) => {
     const {userID} = req.params;
     await User.findByIdAndDelete(userID);
-    // TODO: Delete all comments associated with this user
     res.redirect('/users');
 }))
 
@@ -96,7 +95,6 @@ app.post('/users/:userID/comments', wrapHandler(async (req, res) => {
     if(!user) {
         throw new AppError('User not found', 404);
     }
-    // console.log(req.body);
     const newComment = new Comment(req.body);
     newComment.author = user;
     await newComment.save();
@@ -108,7 +106,6 @@ app.post('/users/:userID/comments', wrapHandler(async (req, res) => {
 app.get('/users/:userID/comments/:commentID', wrapHandler(async (req, res) => {
     const {commentID} = req.params;
     const comment = await Comment.findById(commentID).populate('author');
-    // console.log(comment);
     if(!comment) {
         throw new AppError('Comment not found', 404);
     }
@@ -131,6 +128,12 @@ app.patch('/users/:userID/comments/:commentID', wrapHandler(async (req, res) => 
 }))
 
 // TODO: DELETE /users/:userID/comments/:commentID
+app.delete('/users/:userID/comments/:commentID', wrapHandler(async (req, res) => {
+    const {userID, commentID} = req.params;
+    await Comment.findByIdAndDelete(commentID);
+    await User.findByIdAndUpdate(userID, {$pull: {comments: commentID}});
+    res.redirect(`/users/${userID}`);
+}))
 
 // Comment Routes
 
