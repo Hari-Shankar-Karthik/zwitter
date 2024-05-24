@@ -29,11 +29,6 @@ mongoose.connect('mongodb://localhost:27017/my-comments')
         console.log(err);
     });
 
-const portNum = 8080;
-app.listen(portNum, () => {
-    console.log(`Listening on port ${portNum}`);
-})
-
 // Home Route:
 
 app.get("/home", (req, res) => {
@@ -127,7 +122,6 @@ app.patch('/users/:userID/comments/:commentID', wrapHandler(async (req, res) => 
     res.redirect(`/users/${userID}/comments/${commentID}`);
 }))
 
-// TODO: DELETE /users/:userID/comments/:commentID
 app.delete('/users/:userID/comments/:commentID', wrapHandler(async (req, res) => {
     const {userID, commentID} = req.params;
     await Comment.findByIdAndDelete(commentID);
@@ -142,17 +136,15 @@ app.get("/comments", wrapHandler(async (req, res) => {
     res.render("comments/index", {comments});
 }))
 
-// app.delete("/comments/:id", wrapHandler(async (req, res) => {
-//     const {id} = req.params;
-//     await Comment.findByIdAndDelete(id);
-//     res.redirect("/comments");
-// }))
-
 app.use((err, req, res, next) => {
     const {message = 'Something went wrong...', status = 500} = err;
     res.render('error', {message, status});
 })
 
-// app.use((req, res) => {
-//     res.render("error", {message: 'Page not found', status: 404});
-// })
+app.use((req, res) => {
+    res.render("error", {message: 'Page not found', status: 404});
+})
+
+app.listen(3000, () => {
+    console.log('Listening on port 3000!');
+})
